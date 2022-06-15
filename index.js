@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const logger = require('./utils/logger')
 
 const blogSchema = mongoose.Schema({
   title: String,
@@ -16,13 +17,13 @@ const Blog = mongoose.model('Blog', blogSchema)
 
 const mongoUrl = process.env.MONGODB_URI
 
-console.log('connecting to', mongoUrl)
+logger.info('connecting to', mongoUrl)
 mongoose.connect(mongoUrl)
     .then(result => {
-        console.log('Connected to MongoDB, yay you')
+        logger.info('Connected to MongoDB, yay you')
     })
     .catch((error) => {
-        console.log('error connecting to MongoDB', error.message)
+        logger.error('error connecting to MongoDB', error.message)
     })
 
 app.use(cors())
@@ -48,5 +49,5 @@ app.post('/api/blogs', (request, response) => {
 
 const PORT = 3003
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  logger.info(`Server running on port ${PORT}`)
 })
