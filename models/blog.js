@@ -1,3 +1,5 @@
+// Siirrä tietokantayhteys pois
+
 const logger = require('../utils/logger')
 const config = require('../utils/config')
 const mongoose = require('mongoose')
