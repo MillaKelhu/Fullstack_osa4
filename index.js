@@ -1,5 +1,3 @@
-// Tämä tulee olemaan pelkkä käynnistystiedosto!
-
 const http = require('http')
 const config = require('./utils/config')
 const app = require('./app')
