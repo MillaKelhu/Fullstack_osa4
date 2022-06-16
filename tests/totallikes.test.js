@@ -45,7 +45,7 @@ describe('total likes', () => {
           "likes": 12,
           "__v": 0
         }
-      ]
+    ]
 
     test('of empty list is zero', () => {
         const result = listHelper.totalLikes(listWithZeroBlogs)
