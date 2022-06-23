@@ -139,10 +139,16 @@ describe('most likes', () => {
 
     test('of a bigger list with two equal favorite authors equals one of those authors', () => {
         const result = listHelper.mostLikes(listWithManyBlogsAndTwoFavoriteAuthors)
-
-        expect(result).toEqual({
-            author: 'Robert C. Martin',
-            likes: 17
-        })
+        const possibleResult = [
+            {
+                author: 'Robert C. Martin',
+                likes: 17
+            },
+            {
+                author: 'Edsger W. Dijkstra',
+                likes: 17
+            }
+        ]
+        expect(possibleResult).toContainEqual(result)
     })
 })

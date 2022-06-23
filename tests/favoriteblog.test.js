@@ -106,11 +106,24 @@ describe('favorite blog', () => {
 
     test('of a bigger list with many favorites equals one of those blogs', () => {
         const result = listHelper.favoriteBlog(listWithFourBlogsWithSameLikes)
-        expect(result).toEqual({
+        const possibleResult = [
+          {
+            "title": "License To Queer",
+            "author": "David Lowbridge-Ellis",
+            "likes": 10
+          },
+          {
+            "title": "James Bond food",
+            "author": "Edward Biddulph",
+            "likes": 10
+          },
+          {
             "title": "BAMF Style",
             "author": "Nick Guzan",
             "likes": 10
-          })
+          }
+        ]
+        expect(possibleResult).toContainEqual(result)
     })
 
 })

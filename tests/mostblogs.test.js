@@ -112,10 +112,17 @@ describe('most blogs', () => {
 
     test('of a bigger list with many prolific authors equals one of those authors', () => {
         const result = listHelper.mostBlogs(listWithManyBlogsAndTwoEqualAuthors)
-        expect(result).toEqual({
-            author: 'Edsger W. Dijkstra',
-            blogs: 2
-        })
+        const possibleResult = [
+            {
+                author: 'Robert C. Martin',
+                blogs: 2
+            },
+            {
+                author: 'Edsger W. Dijkstra',
+                blogs: 2
+            }
+        ]
+        expect(possibleResult).toContainEqual(result)
     })
 
 })
