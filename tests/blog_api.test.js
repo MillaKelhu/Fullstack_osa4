@@ -52,6 +52,20 @@ test('a new blog without predefined likes has 0 likes', async () => {
     expect(newestBlog.likes).toEqual(0)
 })
 
+test('an incomplete blog entry will not be added', async () => {
+    const newBlog = {
+        "author": "Ian Fleming"
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+    const blogs = await helper.blogsInDb()
+    expect(blogs.length).toEqual(helper.initialBlogs.length)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
