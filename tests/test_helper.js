@@ -28,7 +28,14 @@ const blogsInDb = async () => {
   return blogs.map(blog => blog.toJSON())
 }
 
+const newBlog = {
+  "title": "Bond and Banter",
+  "author": "Jack Lugo",
+  "url": "https://bondandbanter.libsyn.com/"
+}
+
 module.exports = {
     initialBlogs,
-    blogsInDb
+    blogsInDb,
+    newBlog
 }

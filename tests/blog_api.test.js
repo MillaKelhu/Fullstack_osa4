@@ -27,15 +27,9 @@ test('blogs have an identifying field id', async () => {
 })
 
 test('a valid blog can be added', async () => {
-    const newBlog = {
-        "title": "Bond and Banter",
-        "author": "Jack Lugo",
-        "url": "https://bondandbanter.libsyn.com/"
-    }
-
     await api
         .post('/api/blogs')
-        .send(newBlog)
+        .send(helper.newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -43,7 +37,19 @@ test('a valid blog can be added', async () => {
     expect(blogsAfterAddition).toHaveLength(helper.initialBlogs.length + 1)
 
     const titles = blogsAfterAddition.map(b => b.title)
-    expect(titles).toContain(newBlog.title)
+    expect(titles).toContain(helper.newBlog.title)
+})
+
+test('a new blog without predefined likes has 0 likes', async () => {
+    await api
+        .post('/api/blogs')
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const allBlogs = await helper.blogsInDb()
+    const newestBlog = allBlogs[allBlogs.length - 1]
+    expect(newestBlog.likes).toEqual(0)
 })
 
 afterAll(() => {
