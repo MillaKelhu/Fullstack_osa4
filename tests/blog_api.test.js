@@ -54,7 +54,7 @@ test('a new blog without predefined likes has 0 likes', async () => {
 
 test('an incomplete blog entry will not be added', async () => {
     const newBlog = {
-        "author": "Ian Fleming"
+        author: "Ian Fleming"
     }
 
     await api
@@ -85,6 +85,26 @@ test('a blog with existing id can be deleted', async () => {
 
     const titles = allBlogs.map(b => b.titles)
     expect(titles).not.toContain(helper.newBlog.title)
+})
+
+test('a blog can be updated', async () => {
+    let allBLogs = await helper.blogsInDb()
+    const blogToBeUpdated = allBLogs[0]
+    const newLikes = {
+        likes: blogToBeUpdated.likes + 20
+    }
+
+    await api
+        .put(`/api/blogs/${blogToBeUpdated.id}`)
+        .send(newLikes)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    allBLogs = await helper.blogsInDb()
+    const updatedBLog = allBLogs[0]
+    expect(updatedBLog.id).toEqual(blogToBeUpdated.id)
+    expect(updatedBLog.likes).toEqual(blogToBeUpdated.likes + 20)
+
 })
 
 afterAll(() => {
