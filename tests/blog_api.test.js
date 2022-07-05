@@ -66,6 +66,27 @@ test('an incomplete blog entry will not be added', async () => {
     expect(blogs.length).toEqual(helper.initialBlogs.length)
 })
 
+test('a blog with existing id can be deleted', async () => {
+    await api
+        .post('/api/blogs')
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    let allBlogs = await helper.blogsInDb()
+    const idToBeDeleted = allBlogs[allBlogs.length - 1].id
+
+    await api
+        .delete(`/api/blogs/${idToBeDeleted}`)
+        .expect(204)
+
+    allBlogs = await helper.blogsInDb()
+    expect(allBlogs.length).toEqual(helper.initialBlogs.length)
+
+    const titles = allBlogs.map(b => b.titles)
+    expect(titles).not.toContain(helper.newBlog.title)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
