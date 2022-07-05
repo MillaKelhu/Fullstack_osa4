@@ -11,11 +11,22 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-test('blogs are returned as json', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('blogs', () => {
+    test('are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
+
+    test('have an identifying field id', async () => {
+        const blogs = await helper.blogsInDb()
+        const ids = blogs.map(b => b.id)
+
+        for (const id of ids) {
+            expect(id).toBeDefined()
+        }
+    })
 })
 
 afterAll(() => {
