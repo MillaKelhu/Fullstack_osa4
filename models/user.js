@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema({
     },
     passwordHash: {
         type: String,
-        minlength: 3,
         required: true
     }
 })

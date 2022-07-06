@@ -4,7 +4,6 @@ const usersRouter = express.Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (request, response) => {
-    console.log('things are doing things')
     const users = await User.find({})
     response.json(users)
 })
