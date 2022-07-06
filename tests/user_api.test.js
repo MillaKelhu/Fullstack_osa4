@@ -31,3 +31,60 @@ test('a valid user can be added', async () => {
     const names = usersAfterAddition.map(user => user.name)
     expect(names).toContain(helper.newUser.name)
 })
+
+test('a user with too short username will not be added', async () => {
+    const newUser = {
+        username: "Vi",
+        name: "Violet",
+        password: "password"
+    }
+
+    await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+    const users = await helper.usersInDb()
+    expect(users.length).toEqual(helper.initialUsers.length)
+
+    const names = users.map(user => user.name)
+    expect(names).not.toContain(newUser.name)
+})
+
+test('a user with too short password will not be added', async () => {
+    const newUser = {
+        username: "PrincessOfParallelograms",
+        name: "Anne Isabella Noel Byron",
+        password: "##"
+    }
+
+    await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+    const users = await helper.usersInDb()
+    expect(users.length).toEqual(helper.initialUsers.length)
+
+    const names = users.map(user => user.name)
+    expect(names).not.toContain(newUser.name)
+})
+
+test('a username must be unique', async () => {
+    const newUser = {
+        username: "enchantress_of_numbers",
+        name: "Augusta Ada King",
+        password: "#####"
+    }
+
+    await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+    const users = await helper.usersInDb()
+    expect(users.length).toEqual(helper.initialUsers.length)
+
+    const names = users.map(user => user.name)
+    expect(names).not.toContain(newUser.name)
+})

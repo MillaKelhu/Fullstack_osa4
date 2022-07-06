@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const userSchema = mongoose.Schema({
     username: {
         type: String,
-        minlength: 2,
+        minlength: 3,
         required: true
     },
     name: {
@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
     },
     passwordHash: {
         type: String,
-        minlength: 5,
+        minlength: 3,
         required: true
     }
 })

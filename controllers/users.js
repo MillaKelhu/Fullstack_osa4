@@ -11,18 +11,28 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.post('/', async (request, response) => {
     const body = request.body
+    const existingUser = await User.findOne({ username: `${body.username}` })
+    if (existingUser) {
+        return response.status(400).json({
+            error: `User validation failed: username ('${body.username}') is not unique`
+        })
+    }
 
-    saltRounds = 10
-    const hashedPassword = await bcrypt.hash(body.password, saltRounds)
+    if (body.password.length > 2) {
+        saltRounds = 10
+        const hashedPassword = await bcrypt.hash(body.password, saltRounds)
 
-    const user = new User({
-        username: body.username,
-        name: body.name,
-        passwordHash: hashedPassword
-    })
+        const user = new User({
+            username: body.username,
+            name: body.name,
+            passwordHash: hashedPassword
+        })
 
-    const savedUser = await user.save()
-    response.status(201).json(savedUser)
+        const savedUser = await user.save()
+        response.status(201).json(savedUser)
+    } else {
+        return response.status(400).json({error: `User validation failed: password is shorter than the minimum allowed length (3).`})
+    }
 })
 
 module.exports = usersRouter
