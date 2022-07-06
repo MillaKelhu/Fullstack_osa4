@@ -5,6 +5,7 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -105,6 +106,24 @@ test('a blog can be updated', async () => {
     expect(updatedBLog.id).toEqual(blogToBeUpdated.id)
     expect(updatedBLog.likes).toEqual(blogToBeUpdated.likes + 20)
 
+})
+
+test('a newly added blog will have a user attached', async () => {
+    await api
+        .post('/api/blogs')
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const allBlogs = await helper.blogsInDb()
+    const newestBlog = allBlogs[allBlogs.length - 1]
+    expect(newestBlog.user).not.toEqual(undefined)
+
+    const user = await User.findById(newestBlog.user)
+    expect(user).toBeDefined()
+
+    const userBlogs = user.blogs.map(id => id.toString())
+    expect(userBlogs).toContain(newestBlog.id)
 })
 
 afterAll(() => {
