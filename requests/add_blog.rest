@@ -1,5 +1,6 @@
 POST https://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvcGUtbW90aGVyIiwiaWQiOiI2MmM1OGQ4YTI0YmVkMzI1OTY3MzJmOGIiLCJpYXQiOjE2NTcyMDg5MTB9.wCyycsSUgtAdc92D6EGo9rVmJ2ZhzNVJOqBTYuy4vE0
 
 {
     "title": "License To Queer",

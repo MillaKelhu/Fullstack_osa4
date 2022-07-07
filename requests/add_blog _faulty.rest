@@ -1,0 +1,8 @@
+POST https://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "License To Queer",
+    "author": "David Lowbridge-Ellis",
+    "url": "https://www.licencetoqueer.com/"
+}
