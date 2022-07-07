@@ -6,10 +6,12 @@ const MONGODB_URI = process.env.NODE_ENV === 'test'
 const PORT = process.env.PORT
 const KEY = process.env.KEY_FILE
 const CERT = process.env.CERT_FILE
+const SECRET = process.env.SECRET
 
 module.exports = {
     MONGODB_URI,
     PORT,
     KEY,
-    CERT
+    CERT,
+    SECRET
 }
