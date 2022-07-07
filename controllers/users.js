@@ -13,7 +13,7 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.post('/', async (request, response) => {
     const body = request.body
-    const existingUser = await User.findOne({ username: `${body.username}` })
+    const existingUser = await User.findOne({ username: body.username })
     if (existingUser) {
         return response.status(400).json({
             error: `User validation failed: username ('${body.username}') is not unique`
