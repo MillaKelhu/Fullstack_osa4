@@ -62,9 +62,15 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
-const newUser = {
+const newUserA = {
   username: "rope-mother",
   name: "Margaret Hamilton",
+  password: "password"
+}
+
+const newUserB = {
+  username: "dragonTattoo",
+  name: "Lisbeth Salander",
   password: "password"
 }
 
@@ -74,5 +80,6 @@ module.exports = {
     newBlog,
     initialUsers,
     usersInDb,
-    newUser
+    newUserA,
+    newUserB
 }

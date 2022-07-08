@@ -15,7 +15,12 @@ beforeEach(async () => {
     await User.deleteMany({})
     await api
         .post('/api/users')
-        .send(helper.newUser)
+        .send(helper.newUserA)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    await api
+        .post('/api/users')
+        .send(helper.newUserB)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 })
@@ -36,7 +41,7 @@ test('blogs have an identifying field id', async () => {
 })
 
 test('a valid blog can be added if a user is logged in', async () => {
-    const user = helper.newUser
+    const user = helper.newUserA
 
     const userResponse = await api
         .post('/api/login')
@@ -69,7 +74,7 @@ test('even a valid blog will not be added if user is not logged in', async () =>
 })
 
 test('a new blog without predefined likes has 0 likes', async () => {
-    const user = helper.newUser
+    const user = helper.newUserA
 
     const userResponse = await api
         .post('/api/login')
@@ -90,7 +95,7 @@ test('a new blog without predefined likes has 0 likes', async () => {
 })
 
 test('an incomplete blog entry will not be added', async () => {
-    const user = helper.newUser
+    const user = helper.newUserA
 
     const userResponse = await api
         .post('/api/login')
@@ -112,8 +117,8 @@ test('an incomplete blog entry will not be added', async () => {
     expect(blogs.length).toEqual(helper.initialBlogs.length)
 })
 
-test('a blog with existing id can be deleted', async () => {
-    const user = helper.newUser
+test('a blog with existing id can be deleted by its creator', async () => {
+    const user = helper.newUserA
 
     const userResponse = await api
         .post('/api/login')
@@ -133,13 +138,83 @@ test('a blog with existing id can be deleted', async () => {
 
     await api
         .delete(`/api/blogs/${idToBeDeleted}`)
+        .set('Authorization', `bearer ${userResponse.body.token}`)
         .expect(204)
 
     allBlogs = await helper.blogsInDb()
     expect(allBlogs.length).toEqual(helper.initialBlogs.length)
 
-    const titles = allBlogs.map(b => b.titles)
+    const titles = allBlogs.map(b => b.title)
     expect(titles).not.toContain(helper.newBlog.title)
+})
+
+test('a blog can not be deleted without a logged in user', async () => {
+    const user = helper.newUserA
+
+    const userResponse = await api
+        .post('/api/login')
+        .send(user)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    await api
+        .post('/api/blogs')
+        .set('Authorization', `bearer ${userResponse.body.token}`)
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    let allBlogs = await helper.blogsInDb()
+    const idToBeDeleted = allBlogs[allBlogs.length - 1].id
+
+    await api
+        .delete(`/api/blogs/${idToBeDeleted}`)
+        .expect(401)
+
+    allBlogs = await helper.blogsInDb()
+    expect(allBlogs.length).toEqual(helper.initialBlogs.length +1)
+
+    const titles = allBlogs.map(b => b.title)
+    expect(titles).toContain(helper.newBlog.title)
+})
+
+test('a blog can not be deleted by a user who is not its creator', async () => {
+    const userA = helper.newUserA
+    const userB = helper.newUserB
+
+    const userResponseA = await api
+        .post('/api/login')
+        .send(userA)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    await api
+        .post('/api/blogs')
+        .set('Authorization', `bearer ${userResponseA.body.token}`)
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    let allBlogs = await helper.blogsInDb()
+    const idToBeDeleted = allBlogs[allBlogs.length - 1].id
+
+    const userResponseB = await api
+        .post('/api/login')
+        .send(userB)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    await api
+        .delete(`/api/blogs/${idToBeDeleted}`)
+        .set('Authorization', `bearer ${userResponseB.body.token}`)
+        .expect(401)
+
+    allBlogs = await helper.blogsInDb()
+    expect(allBlogs.length).toEqual(helper.initialBlogs.length +1)
+
+    const titles = allBlogs.map(b => b.title)
+
+    expect(titles).toContain(helper.newBlog.title)
 })
 
 test('a blog can be updated', async () => {
@@ -163,7 +238,7 @@ test('a blog can be updated', async () => {
 })
 
 test('a newly added blog will have a user attached', async () => {
-    let user = helper.newUser
+    let user = helper.newUserA
 
     const userResponse = await api
         .post('/api/login')
