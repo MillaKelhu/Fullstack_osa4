@@ -1,10 +1,6 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
-const config = require('../utils/config')
 const blogsRouter = express.Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
@@ -14,18 +10,14 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogs)
   })
 
-blogsRouter.post('/', middleware.tokenExtractor, async (request, response, next) => {
+blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
-  const decodedToken = request.token === null
-    ? null
-    :jwt.verify(request.token, config.SECRET)
+  const user = request.user
 
-  if (!decodedToken || !decodedToken.id) {
-    return response.status(401).json({ error: 'Unauthorized: token is missing or invalid' })
+  if (user === null) {
+    return response.status(401).json({ error: 'Unauthorized: user is missing' })
   }
-
-  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     title: body.title,
@@ -43,21 +35,14 @@ blogsRouter.post('/', middleware.tokenExtractor, async (request, response, next)
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', middleware.tokenExtractor, async (request, response, next) => {
+blogsRouter.delete('/:id', async (request, response, next) => {
   const body = request.body
 
-  const decodedToken = request.token === null
-    ? null
-    :jwt.verify(request.token, config.SECRET)
+  const user = request.user
 
-  if (!decodedToken || !decodedToken.id) {
-    return response.status(401).json({ error: 'Unauthorized: token is missing or invalid' })
-  }
-
-  const user = await User.findById(decodedToken.id)
   const blog = await Blog.findById(request.params.id)
 
-  if (blog.user.toString() === user._id.toString()) {
+  if (user !== null && blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
   } else {
