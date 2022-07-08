@@ -9,13 +9,13 @@ beforeEach(async () => {
     await User.deleteMany({})
     await api
         .post('/api/users')
-        .send(helper.newUser)
+        .send(helper.newUserA)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 })
 
 test('login with an existing user works', async () => {
-    const user = helper.newUser
+    const user = helper.newUserA
 
     const response = await api
         .post('/api/login')

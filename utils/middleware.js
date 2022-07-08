@@ -20,10 +20,24 @@ const tokenExtractor = (request, response, next) => {
     }
 
     next()
-  }
+}
+
+const userExtractor = async (request, response, next) => {
+    const decodedToken = request.token === null
+        ? null
+        :jwt.verify(request.token, config.SECRET)
+
+    if (!decodedToken || !decodedToken.id) {
+        return response.status(401).json({ error: 'Unauthorized: token is missing or invalid' })
+    }
+
+    request.user = await User.findById(decodedToken.id)
+    next()
+}
 
 module.exports = {
     unknownEndpoint,
     errorHandler,
-    tokenExtractor
+    tokenExtractor,
+    userExtractor
 }

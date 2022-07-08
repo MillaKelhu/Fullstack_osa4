@@ -21,7 +21,7 @@ test('users are returned as json', async () => {
 test('a valid user can be added', async () => {
     await api
         .post('/api/users')
-        .send(helper.newUser)
+        .send(helper.newUserA)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -29,7 +29,7 @@ test('a valid user can be added', async () => {
     expect(usersAfterAddition.length).toEqual(helper.initialUsers.length + 1)
     
     const names = usersAfterAddition.map(user => user.name)
-    expect(names).toContain(helper.newUser.name)
+    expect(names).toContain(helper.newUserA.name)
 })
 
 test('a user with too short username will not be added', async () => {

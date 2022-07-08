@@ -4,6 +4,7 @@ const config = require('../utils/config')
 const blogsRouter = express.Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
@@ -13,7 +14,7 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogs)
   })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', middleware.tokenExtractor, async (request, response, next) => {
   const body = request.body
 
   const decodedToken = request.token === null
@@ -42,7 +43,7 @@ blogsRouter.post('/', async (request, response, next) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', middleware.tokenExtractor, async (request, response, next) => {
   const body = request.body
 
   const decodedToken = request.token === null
